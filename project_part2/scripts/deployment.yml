@@ -1,0 +1,41 @@
+#
+# To deploy:
+#
+# kubectl apply -f scripts/deploy.yaml
+#
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: book-catalog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: book-catalog
+  template:
+    metadata:
+      labels:
+        app: book-catalog
+    spec:
+      containers: 
+      - name: book-catalog
+        image: book-image:1
+        imagePullPolicy: Never
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://book_catalog_db_kx2z_user:4l1L7WS5aNnqHCVXb6Rc1wrbmGClpw9S@dpg-cs779cjtq21c73covnug-a.oregon-postgres.render.com/book_catalog_db_kx2z"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: book-catalog
+spec:
+  selector:
+    app: book-catalog
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+      nodePort: 30000
